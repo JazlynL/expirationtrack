@@ -66,15 +66,18 @@ public class TrackerController {
 
     @DeleteMapping("/id/{id}")
     public ResponseEntity<?> deleteTrackerById(@PathVariable("id") String id){
-        long deleteTrackerById = Long.parseLong(id);
-        Optional<Tracker> foundTracker = trackerRepository.findById(deleteTrackerById);
-        if(foundTracker.isEmpty()){
-            throw  new HttpClientErrorException(HttpStatus.NOT_FOUND,"Id is not found");
-        }
-        trackerRepository.deleteById(deleteTrackerById);
+     try {
+         long deleteTrackerById = Long.parseLong(id);
+         Optional<Tracker> foundTracker = trackerRepository.findById(deleteTrackerById);
+         if (foundTracker.isEmpty()) {
+             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Id is not found");
+         }
+         trackerRepository.deleteById(deleteTrackerById);
 
-        return   ResponseEntity.ok("This Tracker is deleted"+ foundTracker);
-    }
+         return ResponseEntity.ok("This Tracker is deleted: " + deleteTrackerById);
+     }catch(HttpClientErrorException e ){
+         return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+     }}
 
     // deleting all users
     @DeleteMapping("/all")
@@ -92,6 +95,19 @@ public class TrackerController {
         }catch(HttpClientErrorException e ){
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // updating the users information
+
+    @PutMapping
+    public  ResponseEntity<?> updateTrackerInfo(@RequestBody Tracker updatedTracker){
+        try {
+            Tracker updateTracker = trackerRepository.save(updatedTracker);
+            return new ResponseEntity<>(updateTracker,HttpStatus.CREATED);
+        }catch( HttpClientErrorException e ){
+            return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
 }
