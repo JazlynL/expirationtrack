@@ -8,4 +8,6 @@ import java.util.List;
 public interface TrackerRepository extends JpaRepository<Tracker,Long> {
     
     List <Tracker> findAllByName(String name);
+
+
 }
