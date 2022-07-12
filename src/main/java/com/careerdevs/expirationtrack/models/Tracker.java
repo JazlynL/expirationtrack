@@ -1,13 +1,20 @@
 package com.careerdevs.expirationtrack.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 
 public class Tracker {
+
+
+    @OneToMany(mappedBy = "tracker",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Produce> produce;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
