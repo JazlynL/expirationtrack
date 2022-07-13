@@ -1,8 +1,15 @@
 package com.careerdevs.expirationtrack.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 
 // category system
 // use name field
@@ -14,11 +21,16 @@ public class Produce {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String name;
     private Long quantity;
     private String type;
-    private Date expirationDate;
+    // add annotation for date field
+    @JsonFormat(pattern = "MM-dd-yyyy")
+    private LocalDate expirationDate;
+
+
 
 
     @ManyToOne
@@ -28,7 +40,7 @@ public class Produce {
     public Produce() {
     }
 
-    public Produce(Tracker tracker, Long id, String name, Long quantity, String type, Date expirationDate) {
+    public Produce(Tracker tracker, Long id, String name, Long quantity, String type, LocalDate expirationDate) {
         this.tracker = tracker;
         this.id = id;
         this.name = name;
@@ -71,11 +83,11 @@ public class Produce {
         this.type = type;
     }
 
-    public Date getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
     public Tracker getTracker() {
