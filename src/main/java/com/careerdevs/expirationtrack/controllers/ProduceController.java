@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.lang.reflect.ParameterizedType;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -30,7 +32,7 @@ public class ProduceController {
 
     // uploading the produce to the id
     @PostMapping("/{trackerid}")
-    public ResponseEntity<?> uploadProduce(@PathVariable("trackerid") Long id, @RequestBody Produce produce) {
+    public ResponseEntity<?> uploadProduce(@PathVariable("trackerid") Long id, @RequestBody Produce produce){
         try {
             // check if the tracker Id is available.
             Optional<Tracker> trackerId = trackerRepository.findById(id);
@@ -103,6 +105,16 @@ public class ProduceController {
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    // getting all produce.
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllProduce(){
+        List<Produce> foundProduce = produceRepository.findAll();
+        // maybe use this line of code because this cannot be empty
+        if(foundProduce.isEmpty()){
+            throw  new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(foundProduce,HttpStatus.OK);
     }
 
     // deleting by fields.
