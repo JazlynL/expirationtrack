@@ -174,13 +174,10 @@ public class ProduceController {
 
     // always use request body for updating information
     // updating produce might have to refaxctor.
-    @PutMapping
-    public ResponseEntity<?> updateProduce(@RequestBody Produce produce
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateProduce(@RequestBody Produce produce,@PathVariable Long id
     ) {
         try {
-            Produce updatedProduce = produceRepository.save(produce);
-
-            return new ResponseEntity<>(updatedProduce, HttpStatus.OK);
 
         } catch (HttpClientErrorException e) {
            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
