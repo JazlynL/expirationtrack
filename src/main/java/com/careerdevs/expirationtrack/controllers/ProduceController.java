@@ -10,11 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.lang.reflect.ParameterizedType;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin
@@ -175,9 +171,26 @@ public class ProduceController {
     // always use request body for updating information
     // updating produce might have to refaxctor.
     @PostMapping("/{id}")
-    public ResponseEntity<?> updateProduce(@RequestBody Produce produce,@PathVariable Long id
+    public ResponseEntity<?> updatequantityProduce(@RequestBody Produce produce,@PathVariable Long id
     ) {
         try {
+
+            Optional<Produce> findID = (Produce)produceRepository.findById(id);
+
+            if(findID.isEmpty()){
+                throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            }
+
+           if(produce.getQuantity()!= null){
+               f
+               produce.setQuantity(findID.get().getQuantity());
+           }
+
+           produceRepository.save(produce);
+
+
+           return new ResponseEntity<>(produce,HttpStatus.OK);
+
 
         } catch (HttpClientErrorException e) {
            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
