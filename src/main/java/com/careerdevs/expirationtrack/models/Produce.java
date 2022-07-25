@@ -2,6 +2,7 @@ package com.careerdevs.expirationtrack.models;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,6 +16,8 @@ import java.util.Locale;
 // use name field
 // use Date class for expiration date
 @Entity
+
+
 public class Produce {
 
 
