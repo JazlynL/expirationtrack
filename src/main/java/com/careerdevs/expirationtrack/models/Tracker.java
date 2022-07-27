@@ -1,6 +1,7 @@
 package com.careerdevs.expirationtrack.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -11,9 +12,7 @@ import java.util.Set;
 public class Tracker {
 
 
-    @OneToMany(mappedBy = "tracker",fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Produce> produce;
+
 
 
     @Id
@@ -21,13 +20,18 @@ public class Tracker {
     private Long id;
     private String name;
     private String email;
-    private Integer age;
+    private Long age;
+
+
+    @OneToMany(mappedBy = "tracker",fetch = FetchType.LAZY)
+    @JsonIncludeProperties({"name","id"})
+    private Set<Produce> produce;
 
 
     public Tracker() {
     }
 
-    public Tracker(Long id, String name, String email, Integer age) {
+    public Tracker(Long id, String name, String email, Long age) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -46,7 +50,7 @@ public class Tracker {
         return email;
     }
 
-    public Integer getAge() {
+    public Long getAge() {
         return age;
     }
 
@@ -62,7 +66,11 @@ public class Tracker {
         this.email = email;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(Long age) {
         this.age = age;
+    }
+
+    public Set<Produce> getProduce() {
+        return produce;
     }
 }
