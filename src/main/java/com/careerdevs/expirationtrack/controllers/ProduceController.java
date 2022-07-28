@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -123,7 +124,7 @@ public class ProduceController {
             switch (field) {
                 case "name" -> deletedProduce = produceRepository.deleteByName(value);
                 case "quantity" -> deletedProduce = produceRepository.deleteByQuantity(value);
-                case "type" -> deletedProduce = produceRepository.deleteByType(value);
+
             }
 
             if (deletedProduce.isEmpty() || deletedProduce == null) {
@@ -167,29 +168,26 @@ public class ProduceController {
         return ResponseEntity.ok("All the produce was successfully deleted, This is how much that was deleted " + foundProduce);
 
     }
+    // kill a server port    kill -9 $(lsof -ti:3000)
 
     // always use request body for updating information
     // updating produce might have to refaxctor.
-    @PostMapping("/{id}")
+    @PostMapping("/produce/{id}")
     public ResponseEntity<?> updatequantityProduce(@RequestBody Produce produce,@PathVariable Long id
     ) {
         try {
+            // we create this line of code to avoid using the Optional class
+           Produce findId =   produceRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)) ;
 
-            Optional<Produce> findID = (Produce)produceRepository.findById(id);
-
-            if(findID.isEmpty()){
-                throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
-            }
-
-           if(produce.getQuantity()!= null){
-               f
-               produce.setQuantity(findID.get().getQuantity());
+         //
+           if(produce.getName()!= null){
+               findId.setName(produce.getName());
            }
 
-           produceRepository.save(produce);
+           produceRepository.save(findId);
 
 
-           return new ResponseEntity<>(produce,HttpStatus.OK);
+           return ResponseEntity.ok(findId);
 
 
         } catch (HttpClientErrorException e) {
