@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,9 +21,8 @@ public class TrackerController {
 
  // we want to have them in a order of create read update delete
 
-
+// creating a tracker
     @PostMapping("/")
-
     public ResponseEntity<?> createTracker(@RequestBody Tracker newTracker){
         try {
             Tracker trackerPerson = trackerRepository.save(newTracker);
@@ -47,15 +48,11 @@ public class TrackerController {
     }
     //getting user by id.
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTrackerById(@PathVariable ("id") String trackerId){
+    public ResponseEntity<?> getTrackerById(@PathVariable ("id") Long trackerId){
         try {
-            Long numOfTracker = Long.parseLong(trackerId);
-            Optional<Tracker> foundId = trackerRepository.findById(numOfTracker);
-            if(foundId.isEmpty()){
-                throw  new HttpClientErrorException(HttpStatus.NOT_FOUND," Id is not found");
-            }
+           Tracker getTracker = trackerRepository.findById(trackerId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-            return  new ResponseEntity<>(foundId,HttpStatus.OK);
+            return  new ResponseEntity<>(getTracker,HttpStatus.OK);
 
         }catch(HttpClientErrorException e){
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
@@ -98,12 +95,39 @@ public class TrackerController {
     }
 
     // updating the users information
-
-    @PutMapping
-    public  ResponseEntity<?> updateTrackerInfo(@RequestBody Tracker updatedTracker){
+    // name
+    // email
+    // age
+    @PostMapping("/update/{id}")
+    public  ResponseEntity<?> updateTrackerInfo(@RequestBody Tracker updates, @PathVariable Long id){
         try {
-            Tracker updateTracker = trackerRepository.save(updatedTracker);
-            return new ResponseEntity<>(updateTracker,HttpStatus.CREATED);
+            // finding  the Id of the tracker we want to update.
+            Tracker  currentTracker = trackerRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+            // check if updates name/email/age is equal to null
+
+            if(updates.getName() != null){
+                currentTracker.setName(updates.getName());
+            }
+            trackerRepository.save(currentTracker);
+
+            if(updates.getEmail() != null){
+                currentTracker.setEmail(updates.getEmail());
+            }
+            trackerRepository.save(currentTracker);
+
+            if(updates.getAge() != null){
+                currentTracker.setAge(updates.getAge());
+            }
+         trackerRepository.save(currentTracker);
+
+
+
+            return new ResponseEntity<>(currentTracker, HttpStatus.OK);
+
+
+            // Tracker updateTracker = trackerRepository.save(updatedTracker);
+
         }catch( HttpClientErrorException e ){
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
