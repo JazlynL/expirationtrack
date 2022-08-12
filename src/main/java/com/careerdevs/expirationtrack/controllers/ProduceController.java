@@ -68,9 +68,9 @@ public class ProduceController {
     }
 
     @GetMapping("/tracker/{trackerid}")
-    public ResponseEntity<List<Produce>> getbyTrackerId(@PathVariable("trackerid") String id) {
+    public ResponseEntity<List<Produce>> getbyTrackerId(@PathVariable("trackerid") Long id) {
         try {
-            List<Produce> foundByTrackerID = produceRepository.findAllByTracker_id(Long.parseLong(id));
+            List<Produce> foundByTrackerID = produceRepository.findAllByTracker_id(id);
             if (foundByTrackerID.isEmpty()) {
                 throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
             }
@@ -182,6 +182,15 @@ public class ProduceController {
          //
            if(produce.getName()!= null){
                findId.setName(produce.getName());
+           }
+           if(produce.getQuantity()!= null){
+               findId.setQuantity(produce.getQuantity());
+           }
+           if(produce.getType()!= null){
+               findId.setType(produce.getType());
+           }
+           if(produce.getClass()!= null){
+               findId.setExpirationDate(produce.getExpirationDate());
            }
 
            produceRepository.save(findId);
