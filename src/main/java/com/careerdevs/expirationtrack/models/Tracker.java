@@ -24,7 +24,7 @@ public class Tracker {
 
 
     @OneToMany(mappedBy = "tracker",fetch = FetchType.LAZY)
-    @JsonIncludeProperties({"name","id"})
+    @JsonIncludeProperties({"name","id","quantity","type","expirationDate"})
     private Set<Produce> produce;
 
 
