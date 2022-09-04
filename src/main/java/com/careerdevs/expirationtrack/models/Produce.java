@@ -2,15 +2,10 @@ package com.careerdevs.expirationtrack.models;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.Locale;
 
 // category system
 // use name field
@@ -32,24 +27,28 @@ public class Produce {
     // add annotation for date field
     @JsonFormat(pattern = "MM-dd-yyyy")
     private LocalDate expirationDate;
+    private boolean isExpired;
 
 
 
 
     @ManyToOne
+
     @JoinColumn(name = "tracker_id", referencedColumnName = "id")
+    // include a json property
     private Tracker tracker;
 
     public Produce() {
     }
 
-    public Produce(Tracker tracker, Long id, String name, Long quantity, String type, LocalDate expirationDate) {
+    public Produce(Tracker tracker, Long id, String name, Long quantity, String type, LocalDate expirationDate, boolean isExpired) {
         this.tracker = tracker;
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.type = type;
         this.expirationDate = expirationDate;
+        this.isExpired = isExpired;
     }
 
 
@@ -93,10 +92,32 @@ public class Produce {
     public void setExpirationDate(LocalDate expirationDate) {
         this.expirationDate = expirationDate;
     }
+
+    public boolean getIsExpired() {
+        return isExpired;
+    }
+
+
+    // creating my boolean value for my expiration
+    public void setExpired() {
+      if(expirationDate ==null){
+          this.isExpired = true;
+          return;
+      }
+        LocalDate currentDate = LocalDate.now();
+
+        System.out.println(currentDate);
+        // refactor
+          if(expirationDate.isBefore(currentDate)) {
+               this.isExpired= true;
+//            return;
+         }
+    }
+
+
     public Tracker getTracker() {
         return tracker;
     }
-
     public void setTracker(Tracker tracker) {
         this.tracker = tracker;
     }
