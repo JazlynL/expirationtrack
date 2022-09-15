@@ -5,12 +5,14 @@ import com.careerdevs.expirationtrack.models.Tracker;
 import com.careerdevs.expirationtrack.repositories.ProduceRepository;
 import com.careerdevs.expirationtrack.repositories.TrackerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,6 +105,9 @@ public class ProduceController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    // create an end point the will fetch is expired = false , and the name of the produce.
+
+
     // getting all produce.
     @GetMapping("/all")
     public ResponseEntity<?> getAllProduce(){
@@ -168,7 +173,50 @@ public class ProduceController {
         return ResponseEntity.ok("All the produce was successfully deleted, This is how much that was deleted " + foundProduce);
 
     }
+
+    //deleteMethod For Expired Items..
+    // get expirationdate by query , lets see if it works
+    @GetMapping("/getisExpired")
+    public List<Produce> getByExpirationDate(LocalDate localDate){
+
+        return produceRepository.findAllByExpirationDate(localDate);
+
+    }
+
+    // check fridge/expiration , request
+    // this route will find all the pr
+    // saving unchanged items as well.
+
+
+
+
+    @PostMapping("/updateExpiration")
+    public ResponseEntity<String> fridgeUpdated(){
+
+      // we want to find all the none expired items which will be everything in my database
+        List<Produce> foundItems = produceRepository.findAllByIsExpired(false);
+        System.out.println(foundItems);
+
+
+
+
+        for ( Produce item : foundItems) {
+
+                item.setExpired();
+                produceRepository.save(item);
+
+
+
+        }
+        return new ResponseEntity<>("Produce Updated", HttpStatus.OK);
+    }
+
+    /// create a delete endpoint.
+
+
     // kill a server port    kill -9 $(lsof -ti:3000)
+
+
 
     // always use request body for updating information
     // updating produce might have to refaxctor.
@@ -204,6 +252,8 @@ public class ProduceController {
         }
 
     }
+
+
 
 
 }
